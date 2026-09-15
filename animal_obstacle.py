@@ -14,12 +14,6 @@ class AnimalObstacle:
         # Autonomous crossing timer: first crossing in 20-40 s after startup
         self._next_trigger = time.time() + random.uniform(20.0, 40.0)
 
-    def trigger(self):
-        """Triggered by UI button."""
-        if self.state in ["HIDDEN", "CRASHED"]:
-            self.position_y = self.start_y  
-            self.state = "CROSSING"
-
     def update(self, dt):
         now = time.time()
         if self.state == "CROSSING":
@@ -55,6 +49,6 @@ class AnimalObstacle:
                 "heading": "CROSSING",
                 "intent": "JUMPING",
                 "is_crashed": self.state
-                == "CRASHED",  
+                == "CRASHED",
             }
         return None

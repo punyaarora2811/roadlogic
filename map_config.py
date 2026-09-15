@@ -31,7 +31,7 @@ nodes = {
     "I3_SE": (420, 310),
     "I3_SW": (380, 320),
     # --- INTERSECTION 4 (Merge Points - remains as simple) ---
-    "MERGE_UP": (770, 455),  
+    "MERGE_UP": (770, 455),
     "MERGE_DOWN": (760, 475),
 }
 
