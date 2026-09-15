@@ -89,4 +89,4 @@ Run the automated test suite covering cybersecurity signature verification, anti
 pytest test_simulator.py -v
 ```
 
-All 11 unit & integration tests run deterministically in `< 1.0s`.
+All 11 unit & integration tests run deterministically in `< 0.5s`.
