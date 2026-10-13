@@ -34,13 +34,6 @@ def run_simulation():
 
     # DYNAMIC AI SPAWN LOGIC (Traffic Director)
     model_name = os.getenv("GROQ_MODEL", "openai/gpt-oss-20b")
-    llm_spawn = ChatGroq(
-        temperature=0.8,
-        model_name=model_name,
-        max_tokens=150,
-        reasoning_effort="low",
-    )
-
     spawn_prompt = ChatPromptTemplate.from_messages(
         [
             (
@@ -73,7 +66,23 @@ def run_simulation():
         ]
     )
 
-    spawn_chain = spawn_prompt | llm_spawn
+    api_key = os.getenv("GROQ_API_KEY")
+    if api_key:
+        try:
+            llm_spawn = ChatGroq(
+                temperature=0.8,
+                model_name=model_name,
+                max_tokens=150,
+                reasoning_effort="low",
+                api_key=api_key,
+            )
+            spawn_chain = spawn_prompt | llm_spawn
+        except Exception:
+            llm_spawn = None
+            spawn_chain = None
+    else:
+        llm_spawn = None
+        spawn_chain = None
 
     car_counter = 0
 
@@ -124,6 +133,10 @@ def run_simulation():
                         print(f"[Traffic Director] Spawning {fid} at {sn} -> {tn}")
 
             rand_val = random.randint(1, 10000)
+
+            if spawn_chain is None:
+                apply_fallback()
+                return
 
             # Check rate limiter to stay safely under Groq TPM limit
             if not rate_limiter.acquire(timeout=0.8):

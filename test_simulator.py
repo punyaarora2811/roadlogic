@@ -4,6 +4,11 @@ from v2x_security import SecurityManager
 from v2x_network import V2XBroker
 from vehicle_agent import VehicleAgent
 
+@pytest.fixture(autouse=True)
+def offline_test_env(monkeypatch):
+    """Ensure all test cases run reliably offline without requiring live external API keys."""
+    monkeypatch.setenv("GROQ_API_KEY", "mock_ci_groq_api_key")
+
 def test_security_valid_signature():
     """Test if a valid digitally signed package is accepted."""
     data = {
@@ -47,6 +52,15 @@ def test_vehicle_agent_initialization():
     agent = VehicleAgent("Car_1", "W_START", "E_END", desired_speed=60.0)
     assert agent.agent_id == "Car_1"
     assert agent.desired_speed == 60.0
+    assert agent.current_state == "CRUISE"
+
+def test_vehicle_agent_offline_initialization_without_api_key(monkeypatch):
+    """Test if vehicle initializes cleanly in offline mode when GROQ_API_KEY is unset."""
+    monkeypatch.delenv("GROQ_API_KEY", raising=False)
+    agent = VehicleAgent("Car_Offline", "W_START", "E_END", desired_speed=55.0)
+    assert agent.agent_id == "Car_Offline"
+    assert agent.llm is None
+    assert agent.chain is None
     assert agent.current_state == "CRUISE"
 
 def test_vehicle_agent_ambulance_priority(mocker):

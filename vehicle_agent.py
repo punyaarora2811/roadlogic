@@ -45,12 +45,20 @@ class VehicleAgent:
         self.is_crashed = False
 
         model_name = os.getenv("GROQ_MODEL", "openai/gpt-oss-20b")
-        self.llm = ChatGroq(
-            temperature=0,
-            model_name=model_name,
-            max_tokens=150,
-            reasoning_effort="low",
-        )
+        api_key = os.getenv("GROQ_API_KEY")
+        if api_key:
+            try:
+                self.llm = ChatGroq(
+                    temperature=0,
+                    model_name=model_name,
+                    max_tokens=150,
+                    reasoning_effort="low",
+                    api_key=api_key,
+                )
+            except Exception:
+                self.llm = None
+        else:
+            self.llm = None
         # IMPROVED AI PROMPT (Right-of-Way Priority)
         self.prompt = ChatPromptTemplate.from_messages(
             [
@@ -73,7 +81,7 @@ class VehicleAgent:
                 ),
             ]
         )
-        self.chain = self.prompt | self.llm
+        self.chain = (self.prompt | self.llm) if self.llm is not None else None
 
     @property
     def position_x(self):
@@ -788,6 +796,10 @@ class VehicleAgent:
             self._recover_speed()
 
     def _negotiate_ai(self, other_id, other_data):
+        if not self.chain:
+            self._fallback_right_of_way(other_id, other_data)
+            return
+
         current_time = time.time()
         if current_time - self.last_ai_call_time < self.decision_cooldown:
             if self.last_ai_decision == "BRAKE":
@@ -799,6 +811,9 @@ class VehicleAgent:
 
         def call_llm():
             try:
+                if not self.chain:
+                    self._fallback_right_of_way(other_id, other_data)
+                    return
                 # Check rate limiter to guarantee we stay within Groq TPM limits
                 if not rate_limiter.acquire(timeout=1.0):
                     self._fallback_right_of_way(other_id, other_data)
