@@ -89,3 +89,6 @@ scratch/
 /*.png
 !images/
 !images/**
+
+# Benchmark & test reports
+reports/

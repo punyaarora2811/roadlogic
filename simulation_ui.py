@@ -87,7 +87,14 @@ class SimulationUI:
         self.micro_font = get_font(13)
         self.fps = 60
         self.system_on = True
+        self.ai_enabled = True
+        self.autospawn_enabled = True
         self.button_rect = pygame.Rect(20, 20, 160, 45)
+        self.ai_button_rect = pygame.Rect(200, 20, 160, 45)
+        self.autospawn_button_rect = pygame.Rect(380, 20, 175, 45)
+        self.animal_button_rect = pygame.Rect(20, 80, 160, 40)
+        self.spawn_car_button_rect = pygame.Rect(200, 80, 160, 40)
+        self.spawn_amb_button_rect = pygame.Rect(380, 80, 175, 40)
         # Vehicle visual enhancement tracking (smooth rotation & soft trails)
         self.vehicle_angles = {}
         self.vehicle_trails = {}
@@ -420,6 +427,50 @@ class SimulationUI:
         h1 = self.button_rect.collidepoint(mouse_pos)
         draw_modern_button(
             self.screen, self.button_rect, text1, self.font, c1, is_hovered=h1
+        )
+
+        c2 = COLOR_GREEN if self.ai_enabled else COLOR_RED
+        text2 = "AI: ON" if self.ai_enabled else "AI: OFF"
+        h2 = self.ai_button_rect.collidepoint(mouse_pos)
+        draw_modern_button(
+            self.screen, self.ai_button_rect, text2, self.font, c2, is_hovered=h2
+        )
+
+        c_auto = COLOR_GREEN if self.autospawn_enabled else COLOR_RED
+        text_auto = "AUTO-SPAWN: ON" if self.autospawn_enabled else "AUTO-SPAWN: OFF"
+        h_auto = self.autospawn_button_rect.collidepoint(mouse_pos)
+        draw_modern_button(
+            self.screen, self.autospawn_button_rect, text_auto, self.font, c_auto, is_hovered=h_auto
+        )
+
+        h3 = self.animal_button_rect.collidepoint(mouse_pos)
+        draw_modern_button(
+            self.screen,
+            self.animal_button_rect,
+            "SPAWN DEER",
+            self.font,
+            (120, 80, 40),
+            is_hovered=h3,
+        )
+
+        h4 = self.spawn_car_button_rect.collidepoint(mouse_pos)
+        draw_modern_button(
+            self.screen,
+            self.spawn_car_button_rect,
+            "SPAWN AI CAR",
+            self.font,
+            (30, 80, 160),
+            is_hovered=h4,
+        )
+
+        h5 = self.spawn_amb_button_rect.collidepoint(mouse_pos)
+        draw_modern_button(
+            self.screen,
+            self.spawn_amb_button_rect,
+            "SPAWN AMBULANCE",
+            self.font,
+            (180, 30, 40),
+            is_hovered=h5,
         )
 
     def draw_vehicle_shape(self, x, y, smooth_angle, v_data):
@@ -837,6 +888,23 @@ class SimulationUI:
                         self.system_on = not self.system_on
                         if hasattr(broker, "infrastructure_active"):
                             broker.infrastructure_active = self.system_on
+                    elif self.ai_button_rect.collidepoint(event_pos):
+                        self.ai_enabled = not self.ai_enabled
+                        if hasattr(broker, "ai_enabled"):
+                            broker.ai_enabled = self.ai_enabled
+                    elif self.autospawn_button_rect.collidepoint(event_pos):
+                        self.autospawn_enabled = not self.autospawn_enabled
+                        if hasattr(broker, "auto_spawn_enabled"):
+                            broker.auto_spawn_enabled = self.autospawn_enabled
+                    elif self.animal_button_rect.collidepoint(event_pos):
+                        if hasattr(broker, "trigger_animal_event"):
+                            broker.trigger_animal_event()
+                    elif self.spawn_car_button_rect.collidepoint(event_pos):
+                        if hasattr(broker, "trigger_spawn_car"):
+                            broker.trigger_spawn_car()
+                    elif self.spawn_amb_button_rect.collidepoint(event_pos):
+                        if hasattr(broker, "trigger_spawn_ambulance"):
+                            broker.trigger_spawn_ambulance()
             self.draw_environment()
             self.draw_graph_debug_overlay()
             self.draw_buttons(virtual_mouse_pos)

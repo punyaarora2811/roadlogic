@@ -5,6 +5,8 @@ class V2XBroker:
         self.vehicles_status = {}
         self.lock = threading.Lock()
         self.infrastructure_active = True
+        self.ai_enabled = True
+        self.auto_spawn_enabled = True
 
     def publish(self, vehicle_id: str, data_package: dict):
         with self.lock:

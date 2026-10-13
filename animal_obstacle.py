@@ -22,7 +22,7 @@ class AnimalObstacle:
                 self.state = "HIDDEN"
                 # Reset timer for the next autonomous crossing
                 self._next_trigger = now + random.uniform(20.0, 40.0)
-                print("[Deer] Crossed road — next autonomous crossing scheduled.")
+                print("[Deer] Crossed road - next autonomous crossing scheduled.")
         elif self.state == "HIDDEN":
             # Autonomous trigger: cross when timer fires
             if now >= self._next_trigger:
@@ -37,6 +37,13 @@ class AnimalObstacle:
                 self.position_y = self.start_y
                 self.state = "HIDDEN"
                 self._next_trigger = now + random.uniform(20.0, 40.0)
+
+    def trigger(self):
+        """Immediately trigger manual deer crossing (e.g. from UI button)."""
+        self.position_x = self.start_x
+        self.position_y = self.start_y
+        self.state = "CROSSING"
+        print("[Deer] Manual crossing triggered from UI!")
 
     def get_status(self):
         if self.state in ["CROSSING", "CRASHED"]:
