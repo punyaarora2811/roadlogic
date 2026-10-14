@@ -4,7 +4,7 @@
 [![Pygame-CE](https://img.shields.io/badge/Pygame--CE-2.5.6-green.svg)](https://pyga.me/)
 [![AI-Arbiter](https://img.shields.io/badge/LLM-Decision%20Arbiter-purple.svg)]()
 [![Security](https://img.shields.io/badge/Security-SHA--256%20Signed-orange.svg)]()
-[![Tests](https://img.shields.io/badge/Tests-27%20Passed-brightgreen.svg)]()
+[![Tests](https://img.shields.io/badge/Tests-28%20Passed-brightgreen.svg)]()
 
 A state-of-the-art autonomous traffic simulation platform demonstrating the power of **C-V2X (Cellular Vehicle-to-Everything)** networks paired with an **LLM-Powered Decision Arbiter**. The architecture combines deterministic, microsecond-level safety reflexes (ACC, GLOSA, emergency corridors, cryptographic validation) with context-aware LLM negotiation at unsignalized intersections.
 
@@ -35,7 +35,7 @@ Thread-safe message broker enabling vehicles and roadside infrastructure units t
 - **Failsafe Yellow Caution Mode**: When infrastructure is deactivated, signals fall back to amber warning flashers.
 
 ### 6. 🛡️ Security & Message Validation
-- **Authenticity**: SHA-256 HMAC digital signature generation and verification on all V2X packets.
+- **Authenticity**: Keyed SHA-256 digital signature generation and verification on all V2X packets.
 - **Schema Validation**: Mandatory telemetry schema enforcement rejecting malformed payloads.
 - **Anti-Ghosting & Replay Protection**: Strict timestamp freshness checking (`MAX_MESSAGE_AGE = 2.0s`) preventing replay and ghost-vehicle exploits.
 
@@ -55,7 +55,7 @@ Thread-safe message broker enabling vehicles and roadside infrastructure units t
 | [`animal_obstacle.py`](file:///c:/Code/PJT-1/animal_obstacle.py) | Autonomous and on-demand wildlife road hazard triggering emergency collision avoidance. |
 | [`navigation_system.py`](file:///c:/Code/PJT-1/navigation_system.py) | Shortest-path routing engine powered by NetworkX. |
 | [`map_config.py`](file:///c:/Code/PJT-1/map_config.py) | Road network topology, intersection coordinates, spawn/exit nodes, and directed edges. |
-| [`test_simulator.py`](file:///c:/Code/PJT-1/test_simulator.py) | Unit test suite covering security validation, ACC, ambulance priority, and RSU traffic lights (11 tests). |
+| [`test_simulator.py`](file:///c:/Code/PJT-1/test_simulator.py) | Unit test suite covering security validation, ACC, ambulance priority, and RSU traffic lights (12 tests). |
 | [`test_ai_vs_baseline.py`](file:///c:/Code/PJT-1/test_ai_vs_baseline.py) | Benchmark test suite comparing AI ON vs AI OFF across 8 scenarios, generating automated reports (16 tests). |
 
 ---
@@ -111,10 +111,10 @@ python main.py
 
 ## 🧪 Automated Testing & AI Benchmarking
 
-The project includes two automated test suites (**27 tests total**, all passing):
+The project includes two automated test suites (**28 tests total**, all passing):
 
-### 1. Functional & Security Unit Tests (11 Tests)
-Validates cybersecurity HMAC signatures, anti-replay freshness, ACC car following, ambulance pull-over, and RSU traffic light compliance:
+### 1. Functional & Security Unit Tests (12 Tests)
+Validates cybersecurity keyed-SHA-256 signatures, anti-replay freshness, ACC car following, ambulance pull-over, and RSU traffic light compliance:
 ```bash
 pytest test_simulator.py -v
 ```
@@ -136,7 +136,7 @@ pytest -v
 | :--- | :---: | :---: | :---: |
 | **Total Crashes (Congested Scenarios)** | **1** | **0** | **-100% collisions** (Zero crashes) |
 | **Total Deadlocks** | **6** | **5** | **-16.7% deadlocks** |
-| **Mean Average Speed** | **52.56 px/s** | **53.97 px/s** | **+1.41 px/s** (+2.7% flow) |
+| **Mean Average Speed** | **52.56 px/s** | **53.96 px/s** | **+1.40 px/s** (+2.7% flow) |
 | **Safety Reflex Preservation** | 100% | 100% | 0 regressions in V2X / ACC / Animal stops |
 
 ---
